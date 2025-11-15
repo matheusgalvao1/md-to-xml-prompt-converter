@@ -1,0 +1,241 @@
+:root {
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  color: #101828;
+  background: #f2f4f7;
+  line-height: 1.4;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #ffffff 20%, #eef2ff 80%);
+  padding: 2rem;
+  color: inherit;
+}
+
+.app-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 25px 70px rgba(15, 23, 42, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.app-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 1.75rem;
+}
+
+.converter-select {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  color: #475467;
+}
+
+.converter-select select {
+  padding: 0.5rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid #d0d5dd;
+  font-size: 1rem;
+  background: #f8fafc;
+}
+
+.converter-description {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #667085;
+}
+
+.help-guide {
+  background: #f8fafc;
+  border: 1px solid #e4e7ec;
+  border-radius: 12px;
+  margin-top: 1rem;
+}
+
+.help-guide-summary {
+  padding: 1rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1d2939;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  transition: background 0.2s ease;
+}
+
+.help-guide-summary:hover {
+  background: #f1f5f9;
+}
+
+.help-guide-summary::-webkit-details-marker {
+  display: none;
+}
+
+.help-guide-summary::before {
+  content: "▶";
+  display: inline-block;
+  margin-right: 0.5rem;
+  transition: transform 0.2s ease;
+  color: #6366f1;
+}
+
+.help-guide[open] .help-guide-summary::before {
+  transform: rotate(90deg);
+}
+
+.guide-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 0 1.5rem 1.5rem 1.5rem;
+}
+
+.guide-section {
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e4e7ec;
+}
+
+.guide-section:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.guide-section h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+  color: #3538cd;
+}
+
+.guide-section p {
+  margin: 0.5rem 0;
+  color: #475467;
+  font-size: 0.9rem;
+}
+
+.guide-section code {
+  background: #eef2ff;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  color: #3538cd;
+  font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+}
+
+.guide-section pre {
+  background: #ffffff;
+  border: 1px solid #e4e7ec;
+  border-radius: 8px;
+  padding: 0.75rem;
+  margin: 0.5rem 0;
+  overflow-x: auto;
+}
+
+.guide-section pre code {
+  background: transparent;
+  padding: 0;
+  color: #101828;
+}
+
+.example {
+  margin-top: 0.75rem;
+}
+
+.example p {
+  margin: 0.5rem 0;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.editor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.editor-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  color: #1d2939;
+}
+
+.panel-header button {
+  border: none;
+  background: #eef2ff;
+  color: #3538cd;
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+.panel-header button:hover {
+  background: #c7d7fe;
+}
+
+.CodeMirror {
+  width: 100%;
+  min-height: 360px;
+  border-radius: 16px;
+  border: 1px solid #e4e7ec;
+  font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.95rem;
+  color: #101828;
+  background: #f8fafc;
+  box-shadow: inset 0 1px 2px rgba(16, 24, 40, 0.05);
+}
+
+.CodeMirror-scroll {
+  border-radius: 16px;
+}
+
+.CodeMirror-focused {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.25);
+}
+
+.editor-textarea {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  body {
+    padding: 1rem;
+  }
+
+  .app-shell {
+    padding: 1.25rem;
+  }
+
+  .CodeMirror {
+    min-height: 240px;
+  }
+}
+

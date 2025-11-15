@@ -1,0 +1,63 @@
+<div class="guide-section">
+  <h3>Headers → Tags</h3>
+  <p>Each markdown header becomes a lowercase XML tag. Spaces and special characters are replaced with underscores.</p>
+  <div class="example">
+    <code># Main Title</code> → <code>&lt;main_title&gt;</code>
+  </div>
+</div>
+
+<div class="guide-section">
+  <h3>Italic/Bold Headings</h3>
+  <p>Lines with italic (<code>*Section*</code> or <code>_Section_</code>) or bold (<code>__SECTION__</code>) formatting at the root level (no indentation) are treated as level 1 headers.</p>
+  <div class="example">
+    <pre><code>*Context*
+__FORMAT__
+__EXAMPLE__</code></pre>
+    <p>becomes:</p>
+    <pre><code>&lt;context&gt;
+&lt;format&gt;
+&lt;example&gt;</code></pre>
+  </div>
+</div>
+
+<div class="guide-section">
+  <h3>Nesting</h3>
+  <p>Smaller headers are nested inside larger ones based on heading level.</p>
+  <div class="example">
+    <pre><code># Title
+## Subtitle</code></pre>
+    <p>becomes:</p>
+    <pre><code>&lt;title&gt;
+  &lt;subtitle&gt;
+  &lt;/subtitle&gt;
+&lt;/title&gt;</code></pre>
+  </div>
+</div>
+
+<div class="guide-section">
+  <h3>Lists</h3>
+  <p><strong>Bullet lists</strong> (<code>- item</code>) become plain <code>&lt;item&gt;</code> tags.</p>
+  <p><strong>Numbered lists</strong> (<code>1. item</code>) include a <code>number</code> attribute.</p>
+  <div class="example">
+    <pre><code>- Bullet item
+1. Numbered item</code></pre>
+    <p>becomes:</p>
+    <pre><code>&lt;item&gt;Bullet item&lt;/item&gt;
+&lt;item number="1"&gt;Numbered item&lt;/item&gt;</code></pre>
+  </div>
+</div>
+
+<div class="guide-section">
+  <h3>Code Blocks</h3>
+  <p>Fenced code blocks are wrapped in <code>&lt;code lang="..."&gt;</code> tags with CDATA.</p>
+  <div class="example">
+    <pre><code>```js
+console.log("hello");
+```</code></pre>
+    <p>becomes:</p>
+    <pre><code>&lt;code lang="js"&gt;&lt;![CDATA[
+console.log("hello");
+]]&gt;&lt;/code&gt;</code></pre>
+  </div>
+</div>
+

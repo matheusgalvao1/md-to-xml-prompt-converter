@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Markdown → XML Prompt Converter</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5/lib/codemirror.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5/theme/neo.css" />
+    <link rel="stylesheet" href="./src/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="app-header">
+        <div>
+          <h1>Markdown → XML Prompt Converter</h1>
+          <p>Type Markdown on the left. Inspect the XML result on the right.</p>
+        </div>
+        <label class="converter-select">
+          <span>Conversion Strategy</span>
+          <select id="strategySelect"></select>
+        </label>
+      </header>
+
+      <main class="editor-grid">
+        <section class="editor-panel">
+          <div class="panel-header">
+            <label for="markdownInput">Markdown</label>
+            <button id="resetButton" type="button">Reset</button>
+          </div>
+          <textarea
+            class="editor-textarea"
+            id="markdownInput"
+            spellcheck="false"
+            aria-label="Markdown input"
+          ></textarea>
+        </section>
+
+        <section class="editor-panel">
+          <div class="panel-header">
+            <label for="xmlOutput">XML</label>
+            <button id="copyButton" type="button">Copy</button>
+          </div>
+          <textarea
+            class="editor-textarea"
+            id="xmlOutput"
+            spellcheck="false"
+            aria-label="XML output"
+            readonly
+          ></textarea>
+        </section>
+      </main>
+
+      <details class="help-guide">
+        <summary class="help-guide-summary">Conversion Rules</summary>
+        <div class="guide-content" id="helpGuideContent">
+          <p>Loading conversion rules...</p>
+        </div>
+      </details>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5/lib/codemirror.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5/mode/markdown/markdown.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5/mode/xml/xml.js"></script>
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
+
