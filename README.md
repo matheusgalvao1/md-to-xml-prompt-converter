@@ -24,7 +24,7 @@ Simple browser-based tool for converting Markdown to XML. Headers become lowerca
 
 ### Example
 
-```markdown
+````markdown
 ## ROLE
 
 You are a helpful assistant
@@ -43,7 +43,7 @@ Be polite
 ```python
 print("Hey")
 ```
-```
+````
 
 Becomes:
 
