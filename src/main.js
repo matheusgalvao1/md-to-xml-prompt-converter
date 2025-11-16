@@ -1,21 +1,23 @@
 import { ConversionManager } from "./modules/ConversionManager.js";
 import { availableConverters } from "./converters/index.js";
 
-const DEFAULT_MARKDOWN = `# Markdown to XML
+const DEFAULT_MARKDOWN = `# ROLE
 
-This is a quick example showing **bold**, _italic_, and \`inline code\`.
+You are a helpful assistant
 
-- Lists are supported
-- They become <item> elements
+__CONTRAINTS__
+- Do not do x
+- When y do:
+  1. First step
+  2. Second step
 
-1. Ordered lists also work
-2. Try a [link](https://example.com) too!
+# PERSONALITY
+## Tone
+Be polite
 
-## Code blocks
-
-\`\`\`js
-const greeting = "Hello";
-console.log(greeting);
+# EXAMPLE
+\`\`\`python
+print("Hey")
 \`\`\`
 `;
 
