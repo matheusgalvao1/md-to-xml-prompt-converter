@@ -1,36 +1,42 @@
 <div class="guide-section">
   <h3>Headers → Tags</h3>
-  <p>Each markdown header becomes a lowercase XML tag. Spaces and special characters are replaced with underscores.</p>
+  <p>Each markdown header becomes a lowercase XML tag. Spaces and special characters are replaced with underscores. Headers are only indented when nested inside other headers, not based on their markdown level.</p>
   <div class="example">
-    <code># Main Title</code> → <code>&lt;main_title&gt;</code>
+    <pre><code>## ROLE
+You are a helpful assistant</code></pre>
+    <p>becomes:</p>
+    <pre><code>&lt;role&gt;
+  You are a helpful assistant
+&lt;/role&gt;</code></pre>
   </div>
 </div>
 
 <div class="guide-section">
   <h3>Italic/Bold Headings</h3>
-  <p>Lines with italic (<code>*Section*</code> or <code>_Section_</code>) or bold (<code>__SECTION__</code>) formatting at the root level (no indentation) are treated as level 1 headers.</p>
+  <p>Lines with italic (<code>_Section_</code>) or bold (<code>__SECTION__</code>) formatting at the root level (no indentation) are treated as level 1 headers. Note: Only underscores (<code>_</code>) create headers, not asterisks (<code>*</code>).</p>
   <div class="example">
-    <pre><code>*Context*
-__FORMAT__
-__EXAMPLE__</code></pre>
+    <pre><code>__CONTRAINTS__
+- Do not do x</code></pre>
     <p>becomes:</p>
-    <pre><code>&lt;context&gt;
-&lt;format&gt;
-&lt;example&gt;</code></pre>
+    <pre><code>&lt;contraints&gt;
+  &lt;item&gt;Do not do x&lt;/item&gt;
+&lt;/contraints&gt;</code></pre>
   </div>
 </div>
 
 <div class="guide-section">
   <h3>Nesting</h3>
-  <p>Smaller headers are nested inside larger ones based on heading level.</p>
+  <p>Smaller headers are nested inside larger ones based on heading level. Headers at the root level (no parent header) are not indented, regardless of their markdown level.</p>
   <div class="example">
-    <pre><code># Title
-## Subtitle</code></pre>
+    <pre><code># PERSONALITY
+## Tone
+Be polite</code></pre>
     <p>becomes:</p>
-    <pre><code>&lt;title&gt;
-  &lt;subtitle&gt;
-  &lt;/subtitle&gt;
-&lt;/title&gt;</code></pre>
+    <pre><code>&lt;personality&gt;
+  &lt;tone&gt;
+    Be polite
+  &lt;/tone&gt;
+&lt;/personality&gt;</code></pre>
   </div>
 </div>
 
@@ -38,26 +44,33 @@ __EXAMPLE__</code></pre>
   <h3>Lists</h3>
   <p><strong>Bullet lists</strong> (<code>- item</code>) become plain <code>&lt;item&gt;</code> tags.</p>
   <p><strong>Numbered lists</strong> (<code>1. item</code>) include a <code>number</code> attribute.</p>
+  <p><strong>Nested lists</strong> are properly indented inside parent list items. Indent nested list items with spaces.</p>
   <div class="example">
-    <pre><code>- Bullet item
-1. Numbered item</code></pre>
+    <pre><code>- When y do:
+  1. First step
+  2. Second step</code></pre>
     <p>becomes:</p>
-    <pre><code>&lt;item&gt;Bullet item&lt;/item&gt;
-&lt;item number="1"&gt;Numbered item&lt;/item&gt;</code></pre>
+    <pre><code>&lt;item&gt;When y do:
+  &lt;item number="1"&gt;First step&lt;/item&gt;
+  &lt;item number="2"&gt;Second step&lt;/item&gt;
+&lt;/item&gt;</code></pre>
   </div>
 </div>
 
 <div class="guide-section">
   <h3>Code Blocks</h3>
-  <p>Fenced code blocks are wrapped in <code>&lt;code lang="..."&gt;</code> tags with CDATA.</p>
+  <p>Fenced code blocks are wrapped in <code>&lt;code lang="..."&gt;</code> tags with CDATA. The language is detected from the code fence identifier.</p>
   <div class="example">
-    <pre><code>```js
-console.log("hello");
+    <pre><code># EXAMPLE
+```python
+print("Hey")
 ```</code></pre>
     <p>becomes:</p>
-    <pre><code>&lt;code lang="js"&gt;&lt;![CDATA[
-console.log("hello");
-]]&gt;&lt;/code&gt;</code></pre>
+    <pre><code>&lt;example&gt;
+  &lt;code lang="python"&gt;&lt;![CDATA[
+print("Hey")
+]]&gt;&lt;/code&gt;
+&lt;/example&gt;</code></pre>
   </div>
 </div>
 

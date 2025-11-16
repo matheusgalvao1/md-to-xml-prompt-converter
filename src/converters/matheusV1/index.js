@@ -34,7 +34,7 @@ function tokenizeBlocks(markdown) {
     }
 
     const headingMatch = line.match(/^(#{1,6})\s+(.*)$/);
-    const italicHeadingMatch = line.match(/^\s{0,3}([*_])([^*_].*?)\1\s*$/);
+    const italicHeadingMatch = line.match(/^\s{0,3}_([^_].*?)_\s*$/);
     const boldHeadingMatch = line.match(/^\s{0,3}__([^_].*?)__\s*$/);
     if (headingMatch) {
       blocks.push({
@@ -49,7 +49,7 @@ function tokenizeBlocks(markdown) {
       blocks.push({
         type: "heading",
         level: 1,
-        text: italicHeadingMatch[2].trim(),
+        text: italicHeadingMatch[1].trim(),
       });
       index += 1;
       continue;
@@ -127,16 +127,64 @@ function readList(lines, start, mode) {
   let index = start;
   const matcher =
     mode === "ordered" ? /^\s{0,3}\d+[.)]\s+(.*)$/ : /^\s{0,3}[-*+]\s+(.*)$/;
+  
+  // Get the base indentation from the first item
+  const firstLine = lines[start];
+  const baseIndent = firstLine.match(/^(\s*)/)[1].length;
 
   while (index < lines.length) {
     const current = lines[index];
     if (isBlank(current)) {
+      // Check if next line is a nested list before breaking
+      if (index + 1 < lines.length) {
+        const nextLine = lines[index + 1];
+        const nextIndent = nextLine.match(/^(\s*)/)?.[1]?.length ?? 0;
+        if (nextIndent > baseIndent) {
+          const nestedUnorderedMatch = nextLine.match(/^\s+[-*+]\s+(.*)$/);
+          const nestedOrderedMatch = nextLine.match(/^\s+\d+[.)]\s+(.*)$/);
+          if (nestedUnorderedMatch || nestedOrderedMatch) {
+            // Skip blank line and process nested list
+            index += 1;
+            continue;
+          }
+        }
+      }
       index += 1;
       break;
     }
 
     const match = current.match(matcher);
     if (!match) {
+      // Check if this is a nested list (more indentation)
+      const currentIndent = current.match(/^(\s*)/)?.[1]?.length ?? 0;
+      if (currentIndent > baseIndent) {
+        // Try to parse as nested list - match any indentation greater than base
+        const nestedUnorderedMatch = current.match(/^\s+[-*+]\s+(.*)$/);
+        const nestedOrderedMatch = current.match(/^\s+\d+[.)]\s+(.*)$/);
+        
+        if (nestedUnorderedMatch || nestedOrderedMatch) {
+          // Parse nested list
+          const nestedMode = nestedOrderedMatch ? "ordered" : "unordered";
+          const { block: nestedBlock, nextIndex: nestedNextIndex } = readList(lines, index, nestedMode);
+          
+          // Attach nested list to the last item
+          if (items.length > 0) {
+            const lastItem = items[items.length - 1];
+            if (typeof lastItem === "string") {
+              items[items.length - 1] = { text: lastItem, nested: [nestedBlock] };
+            } else {
+              if (!lastItem.nested) {
+                lastItem.nested = [];
+              }
+              lastItem.nested.push(nestedBlock);
+            }
+          }
+          
+          index = nestedNextIndex;
+          continue;
+        }
+      }
+      // Not a nested list, break
       break;
     }
 
@@ -197,22 +245,23 @@ function renderBlocks(blocks) {
         stack[stack.length - 1].level >= block.level
       ) {
         const closed = stack.pop();
-        output.push(indent(closed.level) + `</${closed.tagName}>`);
+        output.push(indentStr(closed.indentLevel) + `</${closed.tagName}>`);
       }
 
       const tagName = headingToTagName(block.text);
-      output.push(indent(block.level) + `<${tagName}>`);
-      stack.push({ level: block.level, tagName });
+      const indentLevel = stack.length; // Indent based on nesting depth, not header level
+      output.push(indentStr(indentLevel) + `<${tagName}>`);
+      stack.push({ level: block.level, tagName, indentLevel });
       return;
     }
 
-    const currentLevel = stack.length > 0 ? stack[stack.length - 1].level + 1 : 0;
+    const currentLevel = stack.length + 1; // Content indentation: one level deeper than the header
     output.push(...renderBlock(block, currentLevel));
   });
 
   while (stack.length > 0) {
     const closed = stack.pop();
-    output.push(indent(closed.level) + `</${closed.tagName}>`);
+    output.push(indentStr(closed.indentLevel) + `</${closed.tagName}>`);
   }
 
   return output.join("\n");
@@ -221,7 +270,7 @@ function renderBlocks(blocks) {
 function renderBlock(block, indentLevel) {
   switch (block.type) {
     case "paragraph":
-      return [indent(indentLevel) + escapeXml(block.content)];
+      return [indentStr(indentLevel) + escapeXml(block.content)];
     case "list":
       return renderList(block.items, indentLevel, block.order === "ordered");
     case "code":
@@ -235,7 +284,21 @@ function renderList(items, indentLevel, isOrdered = false) {
   const lines = [];
   items.forEach((item, index) => {
     const numberAttr = isOrdered ? ` number="${index + 1}"` : "";
-    lines.push(indent(indentLevel) + `<item${numberAttr}>${escapeXml(item)}</item>`);
+    const itemText = typeof item === "string" ? item : item.text;
+    const nested = typeof item === "object" && item.nested ? item.nested : [];
+    
+    if (nested.length > 0) {
+      // Item with nested content - put text and nested content on separate lines
+      lines.push(indentStr(indentLevel) + `<item${numberAttr}>${escapeXml(itemText)}`);
+      nested.forEach((nestedBlock) => {
+        const nestedIndentLevel = indentLevel + 1;
+        lines.push(...renderBlock(nestedBlock, nestedIndentLevel));
+      });
+      lines.push(indentStr(indentLevel) + `</item>`);
+    } else {
+      // Simple item without nested content
+      lines.push(indentStr(indentLevel) + `<item${numberAttr}>${escapeXml(itemText)}</item>`);
+    }
   });
   return lines;
 }
